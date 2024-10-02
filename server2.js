@@ -43,6 +43,55 @@ const getUsers = (req, res) => {
     res.end();
 };
 
+//Route handler for POST /api/users
+// const createUser = (req, res) => {
+//     let body = '';
+//     req.on('data', (chunk) => {
+//         body += chunk.toString();
+//     });
+//     req.on('end', () => {
+//         const newUser = JSON.parse()
+//         users.push(newUser);
+//         res.statusCode = 201;
+//         res.write(JSON.stringify(newUser));
+//         res.end();
+//     })
+
+//     // const { name, email } = req.body;
+//     // if (!name || !email) {
+//     //     res.statusCode = 400;
+//     //     res.write(JSON.stringify({ message: 'Name and email are required' }));
+//     //     res.end();
+//     // } else {
+//     //     const newUser = {
+//     //         id: users.length + 1,
+//     //         name,
+//     //         email
+//     //     };
+//     //     users.push(newUser);
+//     //     res.statusCode = 201;
+//     //     res.write(JSON.stringify(newUser));
+//     //     res.end();
+//     // }
+// };
+
+
+const createUser = (req, res) => {
+    parseRequestBody(req, newUser => {
+        // Add the new user to the array
+        newUser.id = users.length + 1;
+        users.push(newUser);
+
+        // Log the new user
+        console.log('User created:', newUser);
+
+        // Send response
+        res.statusCode = 201;
+        res.write(JSON.stringify(newUser));
+        res.end();
+    });
+};
+
 // Not Found Middleware
 const notFound = (req, res) => {
     res.statusCode = 404;
@@ -50,11 +99,15 @@ const notFound = (req, res) => {
     res.end();
 };
 
+
+
 const server = createServer((req, res) => {
     logger(req, res, () => {
         jsonMiddleware(req, res, () => {
             if (req.url === '/api/users' && req.method === 'GET') {
                 getUsers(req, res);
+            }else if (req.url === '/api/user' && req.method === 'POST') {
+                createUser(req, res);
             } else {
                 notFound(req, res);
             }
